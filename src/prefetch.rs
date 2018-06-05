@@ -246,7 +246,7 @@ fn crate_type(v: &BTreeMap<String, toml::Value>) -> Option<String> {
     if let Some(crate_file) = v.get("lib") {
         if let Some(crate_file) = crate_file.as_table() {
             if let Some(crate_type) = crate_file.get("crate-type") {
-                return Some(crate_type.as_str().unwrap().to_string())
+                return Some(format!("\"{}\"", crate_type[0].as_str().unwrap().to_string()));
             }
         }
     }

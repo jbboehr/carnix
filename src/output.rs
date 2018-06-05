@@ -201,6 +201,7 @@ pub fn generate_nix<W: Write, P: AsRef<Path>, Q: AsRef<Path>>(
         }
 
         let path = workspace_members.source_type(src.as_ref(), &main_cra.name);
+
         let mut meta = main_cra.prefetch(&mut cache, &path).unwrap();
         if let Some(inc) = cargo_toml
             .get("package")
@@ -264,9 +265,10 @@ fn cargo_lock_source_type(package: &toml::Value) -> SourceType {
             SourceType::CratesIO
         } else if source.starts_with("git+") {
             let url = source.split_at(4).1;
-            debug!("url = {:?}", url);
             let mut commit = url.split('#');
             if let (Some(url), Some(rev)) = (commit.next(), commit.next()) {
+                let mut url = url.split("?").next().unwrap();
+                debug!("url = {:?}", url);
                 SourceType::Git {
                     url: url.to_string(),
                     rev: rev.to_string(),
